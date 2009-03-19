@@ -1,0 +1,29 @@
+Index: configure.in
+===================================================================
+--- configure.in	(revisión: 433)
++++ configure.in	(copia de trabajo)
+@@ -389,6 +389,9 @@
+ 	elif test -f ${FFMPEG_DIR}/include/libavformat/avformat.h; then
+ 		AC_MSG_RESULT(found ${FFMPEG_DIR}/include/libavformat/avformat.h)
+ 		FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include -DFFMPEG_NEW_INCLUDES"
++    elif test -f ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h; then
++        AC_MSG_RESULT(found ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h)
++        FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include/ffmpeg -DFFMPEG_NEW_INCLUDES" 
+ 	else
+ 		AC_MSG_RESULT(not found)
+ 		FFMPEG_OK="no_found"
+Index: configure
+===================================================================
+--- configure	(revisión: 433)
++++ configure	(copia de trabajo)
+@@ -3261,6 +3261,10 @@
+ 		{ echo "$as_me:$LINENO: result: found ${FFMPEG_DIR}/include/libavformat/avformat.h" >&5
+ echo "${ECHO_T}found ${FFMPEG_DIR}/include/libavformat/avformat.h" >&6; }
+ 		FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include -DFFMPEG_NEW_INCLUDES"
++    elif test -f ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h; then
++        { echo "$as_me:$LINENO: result: found ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h" >&5
++echo "${ECHO_T}found ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h" >&6; }
++        FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include/ffmpeg -DFFMPEG_NEW_INCLUDES"
+ 	else
+ 		{ echo "$as_me:$LINENO: result: not found" >&5
+ echo "${ECHO_T}not found" >&6; }
