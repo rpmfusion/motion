@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.2.11
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -94,6 +94,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11-4
+- rebuild for new F11 features
+
 * Wed Mar 18 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-3
 - Even more corrected init script thanks to Stewart Adam
 
