@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.2.11
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -9,10 +9,10 @@ URL:            http://motion.sourceforge.net/
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:        motion-initscript
 Patch0:         ffmpeg-detection.patch
+Patch1:         ffmpeg-0.5.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
-#Requires:       ffmpeg
 Requires(post): chkconfig
 Requires(preun): chkconfig initscripts
 Requires(postun): initscripts
@@ -29,6 +29,8 @@ without MySQL and PostgreSQL support.
 %setup -q
 #ffmpeg detection patch in version 3.2.11. This is an upstream patch.
 %patch0 -p0
+#ffmpeg 0.5 patch for rawhide/F11
+%patch1 -p0
 
 %build
 %configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql 
@@ -94,6 +96,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Sun Apr 05 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-5
+- Patch and rebuild for ffmpeg 0.5
+
 * Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11-4
 - rebuild for new F11 features
 

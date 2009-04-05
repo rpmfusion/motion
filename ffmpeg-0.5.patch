@@ -1,0 +1,11 @@
+--- ffmpeg.c-original	2008-09-22 01:20:58.000000000 +0200
++++ ffmpeg.c	2009-04-05 11:46:52.000000000 +0200
+@@ -164,7 +164,7 @@
+     return write(fd, buf, size);
+ }
+ 
+-static offset_t file_seek(URLContext *h, offset_t pos, int whence)
++static int64_t file_seek(URLContext *h, int64_t pos, int whence)
+ {
+     int fd = (size_t)h->priv_data;
+     return lseek(fd, pos, whence);
