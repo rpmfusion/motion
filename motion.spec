@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.2.11.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
