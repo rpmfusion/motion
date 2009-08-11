@@ -1,6 +1,6 @@
 Name:           motion
-Version:        3.2.11
-Release:        5%{?dist}
+Version:        3.2.11.1
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -8,11 +8,11 @@ License:        GPLv2+
 URL:            http://motion.sourceforge.net/
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:        motion-initscript
-Patch0:         ffmpeg-detection.patch
-Patch1:         ffmpeg-0.5.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
+#This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
+Requires: libv4l
 Requires(post): chkconfig
 Requires(preun): chkconfig initscripts
 Requires(postun): initscripts
@@ -27,13 +27,9 @@ without MySQL and PostgreSQL support.
 
 %prep
 %setup -q
-#ffmpeg detection patch in version 3.2.11. This is an upstream patch.
-%patch0 -p0
-#ffmpeg 0.5 patch for rawhide/F11
-%patch1 -p0
 
 %build
-%configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql 
+%configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
 #We convert 2 files to UTF-8, otherwise rpmlint complains
 iconv -f iso8859-1 -t utf-8 CREDITS > CREDITS.conv && mv -f CREDITS.conv CREDITS
 iconv -f iso8859-1 -t utf-8 CHANGELOG > CHANGELOG.conv && mv -f CHANGELOG.conv CHANGELOG
@@ -52,6 +48,11 @@ sed -i 's|sql_log_snapshot|; sql_log_snapshot|g' %{buildroot}%{_sysconfdir}/%{na
 sed -i 's|sql_log_mpeg|; sql_log_mpeg|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|sql_log_timelapse|; sql_log_timelapse|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+#We set the log file and target directory - logging is for 3.3 branch
+#sed -i 's|;logfile|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+#We install our startup script - for future 3.3
+#install -D -m 0755 motion.init-RH %{buildroot}%{_initrddir}/%{name}
 #We install our startup script
 install -D -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name}
 
@@ -96,7 +97,17 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
-* Sun Apr 05 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-5
+* Tue Aug 11 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11.1-1
+- Drop patch for ffmpeg 0.5 compatibility
+- Drop ffmpeg detection patch
+- Moved default output directory to /var/motion
+- New startup script with added v4l2convert to support more cameras - https://bugzilla.rpmfusion.org/show_bug.cgi?id=681
+- Fix Segfault on reload or quit for vloopback (maybe other v4l1 devices too)
+- Fix fd leaks in external pipe
+- Avoid possible stack smashing in v4l_open_vidpipe()
+- Fix segfault for new libjpeg v7
+
+* Sun Jun 05 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-5
 - Patch and rebuild for ffmpeg 0.5
 
 * Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11-4
