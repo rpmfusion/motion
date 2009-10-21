@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.2.11.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -97,6 +97,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Wed Oct 21 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11.1-3
+- rebuild for new ffmpeg
+
 * Tue Aug 11 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11.1-1
 - Drop patch for ffmpeg 0.5 compatibility
 - Drop ffmpeg detection patch
