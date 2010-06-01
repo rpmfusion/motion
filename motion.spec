@@ -1,13 +1,12 @@
 Name:           motion
-Version:        3.2.11.1
-Release:        3%{?dist}
+Version:        3.2.12
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
-URL:            http://motion.sourceforge.net/
+URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
-Source1:        motion-initscript
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
@@ -30,9 +29,6 @@ without MySQL and PostgreSQL support.
 
 %build
 %configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
-#We convert 2 files to UTF-8, otherwise rpmlint complains
-iconv -f iso8859-1 -t utf-8 CREDITS > CREDITS.conv && mv -f CREDITS.conv CREDITS
-iconv -f iso8859-1 -t utf-8 CHANGELOG > CHANGELOG.conv && mv -f CHANGELOG.conv CHANGELOG
 make %{?_smp_mflags}
 
 %install
@@ -51,10 +47,8 @@ sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.con
 #We set the log file and target directory - logging is for 3.3 branch
 #sed -i 's|;logfile|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-#We install our startup script - for future 3.3
-#install -D -m 0755 motion.init-RH %{buildroot}%{_initrddir}/%{name}
 #We install our startup script
-install -D -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name}
+install -D -m 0755 motion.init-Fedora %{buildroot}%{_initrddir}/%{name}
 
 %post
 #We add the motion init script to the services when installing
@@ -86,7 +80,7 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/motion-dist.conf
 %attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-Debian
 %attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-FreeBSD.sh
-%attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-RH
+%attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-Fedora
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread1.conf
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread2.conf
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread3.conf
@@ -97,6 +91,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Thu Mar 06 2010 Steven Moix <steven.moix@axianet.ch> - 3.2.12-1
+- New upstream release, important bugfixes only
+
 * Wed Oct 21 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11.1-3
 - rebuild for new ffmpeg
 
@@ -109,6 +106,9 @@ rm -rf %{buildroot}
 - Fix fd leaks in external pipe
 - Avoid possible stack smashing in v4l_open_vidpipe()
 - Fix segfault for new libjpeg v7
+
+* Mon Jul 06 2009 Steven Moix <steven.moix@axianet.ch> - 3.3.0-1
+- SPEC Preparation for the 3.3 branch
 
 * Sun Jun 05 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-5
 - Patch and rebuild for ffmpeg 0.5
