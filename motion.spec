@@ -1,6 +1,6 @@
 Name:           motion
-Version:        3.2.12
-Release:        1%{?dist}
+Version:        3.3.0
+Release:        trunkREV528%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -45,7 +45,7 @@ sed -i 's|sql_log_mpeg|; sql_log_mpeg|g' %{buildroot}%{_sysconfdir}/%{name}/moti
 sed -i 's|sql_log_timelapse|; sql_log_timelapse|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We set the log file and target directory - logging is for 3.3 branch
-#sed -i 's|;logfile|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|;logfile|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
 install -D -m 0755 motion.init-Fedora %{buildroot}%{_initrddir}/%{name}
@@ -91,6 +91,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Thu May 31 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.1.20110531trunkREV528
+- Early 3.3 version taken from SVN to work with 2.6.38+ kernels
+
 * Thu Mar 06 2010 Steven Moix <steven.moix@axianet.ch> - 3.2.12-1
 - New upstream release, important bugfixes only
 
