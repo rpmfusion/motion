@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV528%{?dist}
+Release:        trunkREV531%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -36,6 +36,9 @@ rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 #We rename the configuration file
 mv %{buildroot}%{_sysconfdir}/%{name}/motion-dist.conf %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+#We move the logrotate configuration
+mkdir %{buildroot}%{_sysconfdir}/logrotate.d
+mv %{_builddir}/%{name}-%{version}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion.logrotate
 #We change the PID file path to match the one in the startup script
 sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We remove SQL directives in the configuration file, as we don't use them
@@ -45,7 +48,7 @@ sed -i 's|sql_log_mpeg|; sql_log_mpeg|g' %{buildroot}%{_sysconfdir}/%{name}/moti
 sed -i 's|sql_log_timelapse|; sql_log_timelapse|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We set the log file and target directory - logging is for 3.3 branch
-sed -i 's|;logfile|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
 install -D -m 0755 motion.init-Fedora %{buildroot}%{_initrddir}/%{name}
@@ -85,12 +88,16 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread2.conf
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread3.conf
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread4.conf
+%attr(0644,root,root) %{_sysconfdir}/logrotate.d/motion.logrotate
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/motion.conf
 %attr(0755,root,root) %{_bindir}/motion
 %attr(0644,root,root) %{_mandir}/man1/motion.1*
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.2.20110810trunkREV531
+- Corrects rpmfusion bugs 1878, 1879 and 1880
+
 * Thu May 31 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.1.20110531trunkREV528
 - Early 3.3 version taken from SVN to work with 2.6.38+ kernels
 
