@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV531%{?dist}
+Release:        trunkREV532%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -38,7 +38,7 @@ make install DESTDIR=%{buildroot}
 mv %{buildroot}%{_sysconfdir}/%{name}/motion-dist.conf %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We move the logrotate configuration
 mkdir %{buildroot}%{_sysconfdir}/logrotate.d
-mv %{_builddir}/%{name}-%{version}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion.logrotate
+mv %{_builddir}/%{name}-%{version}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion
 #We change the PID file path to match the one in the startup script
 sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We remove SQL directives in the configuration file, as we don't use them
@@ -88,13 +88,16 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread2.conf
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread3.conf
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread4.conf
-%attr(0644,root,root) %{_sysconfdir}/logrotate.d/motion.logrotate
+%attr(0644,root,root) %{_sysconfdir}/logrotate.d/motion
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/motion.conf
 %attr(0755,root,root) %{_bindir}/motion
 %attr(0644,root,root) %{_mandir}/man1/motion.1*
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV532
+- Fix log rotation and also add compression to it
+
 * Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.2.20110810trunkREV531
 - Corrects rpmfusion bugs 1878, 1879 and 1880
 
