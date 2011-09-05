@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV532%{?dist}
+Release:        trunkREV533%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Mon Sep 06 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV533
+- Fix log rotation again
+
 * Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV532
 - Fix log rotation and also add compression to it
 
