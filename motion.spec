@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV534%{?dist}.2
+Release:        trunkREV534%{?dist}.3
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Tue Jun 26 2012 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.3
+- Rebuilt for FFmpeg
+
 * Tue Feb 28 2012 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.2
 - Rebuilt for x264/FFmpeg
 
