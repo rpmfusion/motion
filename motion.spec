@@ -1,12 +1,13 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557%{?dist}
+Release:        trunkREV557.1%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
@@ -26,6 +27,7 @@ without MySQL and PostgreSQL support.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
@@ -95,6 +97,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Mon Dec 03 2012 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.1
+- add patch to hopefuly fix ARM compilation
+
 * Sun Dec 02 2012 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557
 - package newest trunk, fixing #2586 
 
