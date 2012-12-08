@@ -1,0 +1,24 @@
+From 0e81a85851b9c4aa495b2dd697120df5ca53d660 Mon Sep 17 00:00:00 2001
+From: Tomasz Torcz <tomek@pipebreaker.pl>
+Date: Sat, 8 Dec 2012 10:38:42 +0100
+Subject: [PATCH] there is no "/bin/service" in Fedora, use systemctl
+
+---
+ motion.logrotate | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/motion.logrotate b/motion.logrotate
+index b97f2f3..75ad7c2 100644
+--- a/motion.logrotate
++++ b/motion.logrotate
+@@ -5,6 +5,6 @@
+     size 10M
+     create 0600 root root
+     postrotate
+-        /bin/service motion reload  >/dev/null  2>&1 || true
++        /usr/bin systemctl reload-or-try-restart motion.service  >/dev/null  2>&1 || true
+     endscript
+ }
+-- 
+1.8.0.1
+
