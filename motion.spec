@@ -8,6 +8,7 @@ License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
+Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
@@ -28,6 +29,7 @@ without MySQL and PostgreSQL support.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
@@ -97,6 +99,10 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Sat Dec 08 2012 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.2
+- fix logrotate snippet to use systemctl instead of (non-existant) /bin/service
+  Fixes #26042604
+
 * Thu Dec 06 2012 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.3-trunkREV557.1
 - synchronize with F-18 package version:
   - newest snapshot
