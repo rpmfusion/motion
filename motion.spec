@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.1%{?dist}
+Release:        trunkREV557.2%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
