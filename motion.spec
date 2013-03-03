@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV534%{?dist}.5
+Release:        trunkREV534%{?dist}.6
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Sun Mar 03 2013 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.6
+- Mass rebuilt for Fedora 19 Features
+
 * Wed Jan 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.5
 - Rebuilt for ffmpeg
 
