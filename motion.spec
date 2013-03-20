@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV534%{?dist}.6
+Release:        trunkREV534%{?dist}.7
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -9,7 +9,8 @@ URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
+BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel
+Buildrequires:  pkgconfig(sqlite3)
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
 Requires(post): chkconfig
@@ -28,6 +29,7 @@ without MySQL and PostgreSQL support.
 %setup -q
 
 %build
+export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
 %configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
 make %{?_smp_mflags}
 
@@ -95,6 +97,10 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Wed Mar 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.7
+- Move to ffmpeg-compat support
+- Add sqlite3
+
 * Sun Mar 03 2013 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.6
 - Mass rebuilt for Fedora 19 Features
 
