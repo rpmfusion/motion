@@ -1,15 +1,17 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV534%{?dist}.7
+Release:        trunkREV557.2%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
+Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel
+BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
 Buildrequires:  pkgconfig(sqlite3)
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
@@ -27,9 +29,10 @@ without MySQL and PostgreSQL support.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
-export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
 %configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
 make %{?_smp_mflags}
 
@@ -97,6 +100,12 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.2
+ - synchronize with F-18 version:
+   - patches for ARM compilation and newest ffmpeg
+     (this undoes ffmpeg-compat support)
+   - logrotate fixes
+
 * Wed Mar 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.7
 - Move to ffmpeg-compat support
 - Add sqlite3

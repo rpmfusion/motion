@@ -1,0 +1,28 @@
+From dcb186cb3ad6666d66aba6453031203ba1f6c15a Mon Sep 17 00:00:00 2001
+From: Tomasz Torcz <tomek@pipebreaker.pl>
+Date: Mon, 3 Dec 2012 14:25:50 +0100
+Subject: [PATCH] emit asm "emms" only on x86 and amd64 arches 
+
+Fixes compilation error on ARM: 
+armv5tel - Error: bad instruction `emms`
+
+---
+ ffmpeg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ffmpeg.c b/ffmpeg.c
+index 1c2ae47..57eeda4 100644
+--- a/ffmpeg.c
++++ b/ffmpeg.c
+@@ -1000,7 +1000,7 @@ void ffmpeg_deinterlace(unsigned char *img, int width, int height)
+     /* We assume using 'PIX_FMT_YUV420P' always */
+     avpicture_deinterlace(&picture, &picture, PIX_FMT_YUV420P, width, height);
+ 
+-#ifndef __SSE_MATH__
++#if !defined(__SSE_MATH__) && (defined(__i386__) || defined(__x86_64__))
+     __asm__ __volatile__ ( "emms");
+ #endif
+ 
+-- 
+1.7.11.7
+
