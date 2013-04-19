@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.4%{?dist}
+Release:        trunkREV557.5%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -94,6 +94,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_unitdir}/%{name}.service
 
 %changelog
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.5
+- bump again; I hate CVS
+
 * Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.4
 - add missing unit file and bump rel
 
