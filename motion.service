@@ -1,0 +1,17 @@
+[Unit]
+Description=motion detection system
+Documentation=man:motion(1) http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
+
+[Service]
+# There's no way to do it automatically, sadly
+# if you have problems with your camera, uncomment one of those
+# for PPC64 and X86_64:
+#Environment=LD_PRELOAD=/usr/lib64/libv4l/v4l2convert.so
+# for 32bit archs:
+#Environment=LD_PRELOAD=/usr/lib/libv4l/v4l2convert.so
+ExecStart=/usr/bin/motion -n
+ExecReload=/bin/kill -HUP $MAINPID
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

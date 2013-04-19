@@ -1,21 +1,25 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV534%{?dist}.7
+Release:        trunkREV557.7%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Source1:        motion.service
+Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
+Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel
 Buildrequires:  pkgconfig(sqlite3)
+BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
-Requires(post): chkconfig
-Requires(preun): chkconfig initscripts
-Requires(postun): initscripts
+Requires(post):   systemd
+Requires(preun):  systemd
+Requires(postun): systemd
 
 %description
 Motion is a software motion detector. It grabs images from video4linux devices
@@ -27,6 +31,8 @@ without MySQL and PostgreSQL support.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
@@ -53,24 +59,16 @@ sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.con
 sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
-install -D -m 0755 motion.init-Fedora %{buildroot}%{_initrddir}/%{name}
+install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 
 %post
-#We add the motion init script to the services when installing
-/sbin/chkconfig --add %{name}
+%systemd_post %{name}.service
 
 %preun
-#We stop the service and remove it from init scripts when erasing
-if [ $1 = 0 ] ; then
-    /sbin/service %{name} stop >/dev/null 2>&1
-    /sbin/chkconfig --del %{name}
-fi
+%systemd_preun %{name}.service
 
 %postun
-#We restart the service during an upgrade
-if [ "$1" -ge "1" ] ; then
-    /sbin/service %{name} condrestart >/dev/null 2>&1
-fi
+%systemd_postun_with_restart %{name}.service
 
 %clean
 rm -rf %{buildroot}
@@ -94,9 +92,31 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/motion.conf
 %attr(0755,root,root) %{_bindir}/motion
 %attr(0644,root,root) %{_mandir}/man1/motion.1*
-%attr(0755,root,root) %{_initrddir}/%{name}
+%attr(0755,root,root) %{_unitdir}/%{name}.service
 
 %changelog
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.7
+- re-introduce ffmpeg-compat-devel
+
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.6
+- drop changelog entries before 2012 from .spec; dates were wrong and build failed
+- drop changelog entries before 2012 from .spec; dates were wrong and build failed
+
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.5
+- bump again; I hate CVS
+
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.4
+- add missing unit file and bump rel
+
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.3
+- migrate to systemd unit file
+
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.2
+ - synchronize with F-18 version:
+   - patches for ARM compilation and newest ffmpeg
+     (this undoes ffmpeg-compat support)
+   - logrotate fixes
+
 * Wed Mar 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.7
 - Move to ffmpeg-compat support
 - Add sqlite3
@@ -119,59 +139,3 @@ rm -rf %{buildroot}
 * Wed Jan 25 2012 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
-* Sat Oct 01 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV534
-- Add ffmpeg 0.8 compatibility
-
-* Mon Sep 06 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV533
-- Fix log rotation again
-
-* Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV532
-- Fix log rotation and also add compression to it
-
-* Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.2.20110810trunkREV531
-- Corrects rpmfusion bugs 1878, 1879 and 1880
-
-* Thu May 31 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.1.20110531trunkREV528
-- Early 3.3 version taken from SVN to work with 2.6.38+ kernels
-
-* Thu Mar 06 2010 Steven Moix <steven.moix@axianet.ch> - 3.2.12-1
-- New upstream release, important bugfixes only
-
-* Wed Oct 21 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11.1-3
-- rebuild for new ffmpeg
-
-* Tue Aug 11 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11.1-1
-- Drop patch for ffmpeg 0.5 compatibility
-- Drop ffmpeg detection patch
-- Moved default output directory to /var/motion
-- New startup script with added v4l2convert to support more cameras - https://bugzilla.rpmfusion.org/show_bug.cgi?id=681
-- Fix Segfault on reload or quit for vloopback (maybe other v4l1 devices too)
-- Fix fd leaks in external pipe
-- Avoid possible stack smashing in v4l_open_vidpipe()
-- Fix segfault for new libjpeg v7
-
-* Mon Jul 06 2009 Steven Moix <steven.moix@axianet.ch> - 3.3.0-1
-- SPEC Preparation for the 3.3 branch
-
-* Sun Jun 05 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-5
-- Patch and rebuild for ffmpeg 0.5
-
-* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11-4
-- rebuild for new F11 features
-
-* Wed Mar 18 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-3
-- Even more corrected init script thanks to Stewart Adam
-
-* Sun Mar 15 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-2
-- Removed the ffmpeg requires
-- Corrected the spec file
-- New init script with a corrected start() function and LSB header support
-
-* Tue Mar 03 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-1
-- Updated to Fedora 10 standard
-
-* Sun Sep 18 2005 Kenneth Lavrsen <kenneth@lavrsen.dk> - 3.2.4-1
-- Generic version of livna spec file replacing the old less optimal specfile.
-
-* Thu Sep 15 2005 Dams <anvil[AT]livna.org> - 3.2.3-0.lvn.1
-- Initial released based upon upstream spec file
