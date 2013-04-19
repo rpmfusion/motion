@@ -1,23 +1,25 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.2%{?dist}
+Release:        trunkREV557.3%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Source1:        motion.service
 Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libjpeg-devel ffmpeg-devel zlib-devel
 Buildrequires:  pkgconfig(sqlite3)
+BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
-Requires(post): chkconfig
-Requires(preun): chkconfig initscripts
-Requires(postun): initscripts
+Requires(post):   systemd
+Requires(preun):  systemd
+Requires(postun): systemd
 
 %description
 Motion is a software motion detector. It grabs images from video4linux devices
@@ -56,24 +58,16 @@ sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.con
 sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
-install -D -m 0755 motion.init-Fedora %{buildroot}%{_initrddir}/%{name}
+install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 
 %post
-#We add the motion init script to the services when installing
-/sbin/chkconfig --add %{name}
+%systemd_post %{name}.service
 
 %preun
-#We stop the service and remove it from init scripts when erasing
-if [ $1 = 0 ] ; then
-    /sbin/service %{name} stop >/dev/null 2>&1
-    /sbin/chkconfig --del %{name}
-fi
+%systemd_preun %{name}.service
 
 %postun
-#We restart the service during an upgrade
-if [ "$1" -ge "1" ] ; then
-    /sbin/service %{name} condrestart >/dev/null 2>&1
-fi
+%systemd_postun_with_restart %{name}.service
 
 %clean
 rm -rf %{buildroot}
@@ -97,9 +91,12 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/motion.conf
 %attr(0755,root,root) %{_bindir}/motion
 %attr(0644,root,root) %{_mandir}/man1/motion.1*
-%attr(0755,root,root) %{_initrddir}/%{name}
+%attr(0755,root,root) %{_unitdir}/%{name}.service
 
 %changelog
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.3
+- migrate to systemd unit file
+
 * Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.2
  - synchronize with F-18 version:
    - patches for ARM compilation and newest ffmpeg
