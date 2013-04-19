@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.5%{?dist}
+Release:        trunkREV557.6%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -94,6 +94,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_unitdir}/%{name}.service
 
 %changelog
+* Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.6
+- drop changelog entries before 2012 from .spec; dates were wrong and build failed
+
 * Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.5
 - bump again; I hate CVS
 
@@ -131,59 +134,3 @@ rm -rf %{buildroot}
 * Wed Jan 25 2012 Nicolas Chauvet <kwizart@gmail.com> - 3.3.0-trunkREV534.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
-* Sat Oct 01 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV534
-- Add ffmpeg 0.8 compatibility
-
-* Mon Sep 06 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV533
-- Fix log rotation again
-
-* Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-trunkREV532
-- Fix log rotation and also add compression to it
-
-* Mon Aug 10 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.2.20110810trunkREV531
-- Corrects rpmfusion bugs 1878, 1879 and 1880
-
-* Thu May 31 2011 Steven Moix <steven.moix@axianet.ch> - 3.3.0-0.1.20110531trunkREV528
-- Early 3.3 version taken from SVN to work with 2.6.38+ kernels
-
-* Thu Mar 06 2010 Steven Moix <steven.moix@axianet.ch> - 3.2.12-1
-- New upstream release, important bugfixes only
-
-* Wed Oct 21 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11.1-3
-- rebuild for new ffmpeg
-
-* Tue Aug 11 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11.1-1
-- Drop patch for ffmpeg 0.5 compatibility
-- Drop ffmpeg detection patch
-- Moved default output directory to /var/motion
-- New startup script with added v4l2convert to support more cameras - https://bugzilla.rpmfusion.org/show_bug.cgi?id=681
-- Fix Segfault on reload or quit for vloopback (maybe other v4l1 devices too)
-- Fix fd leaks in external pipe
-- Avoid possible stack smashing in v4l_open_vidpipe()
-- Fix segfault for new libjpeg v7
-
-* Mon Jul 06 2009 Steven Moix <steven.moix@axianet.ch> - 3.3.0-1
-- SPEC Preparation for the 3.3 branch
-
-* Sun Jun 05 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-5
-- Patch and rebuild for ffmpeg 0.5
-
-* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 3.2.11-4
-- rebuild for new F11 features
-
-* Wed Mar 18 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-3
-- Even more corrected init script thanks to Stewart Adam
-
-* Sun Mar 15 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-2
-- Removed the ffmpeg requires
-- Corrected the spec file
-- New init script with a corrected start() function and LSB header support
-
-* Tue Mar 03 2009 Steven Moix <steven.moix@axianet.ch> - 3.2.11-1
-- Updated to Fedora 10 standard
-
-* Sun Sep 18 2005 Kenneth Lavrsen <kenneth@lavrsen.dk> - 3.2.4-1
-- Generic version of livna spec file replacing the old less optimal specfile.
-
-* Thu Sep 15 2005 Dams <anvil[AT]livna.org> - 3.2.3-0.lvn.1
-- Initial released based upon upstream spec file
