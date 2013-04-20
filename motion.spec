@@ -8,6 +8,7 @@ License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:        motion.service
+Source2:        motion.tmpfiles
 Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -17,6 +18,7 @@ Buildrequires:  pkgconfig(sqlite3)
 BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
+Requires(pre):    shadow-utils
 Requires(post):   systemd
 Requires(preun):  systemd
 Requires(postun): systemd
@@ -47,6 +49,8 @@ mv %{buildroot}%{_sysconfdir}/%{name}/motion-dist.conf %{buildroot}%{_sysconfdir
 #We move the logrotate configuration
 mkdir %{buildroot}%{_sysconfdir}/logrotate.d
 mv %{_builddir}/%{name}-%{version}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion
+#We run as motion:video user, reflect that in logrotate config
+sed -i 's|create 0600 root root|create 0600 motion video|g' %{buildroot}%{_sysconfdir}/logrotate.d/motion
 #We change the PID file path to match the one in the startup script
 sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We remove SQL directives in the configuration file, as we don't use them
@@ -60,8 +64,17 @@ sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{
 sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
 install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
+#We install tmpfiles configuration
+install -D -m 0755 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+
+%pre
+getent passwd motion >/dev/null || \
+    useradd -r -g video -d /run/motion -s /sbin/nologin \
+    -c "motion detection system" motion
+exit 0
 
 %post
+/usr/bin/systemd-tmpfiles --create %{_tmpfilesdir}/%{name}.conf
 %systemd_post %{name}.service
 
 %preun
@@ -69,6 +82,12 @@ install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 
 %postun
 %systemd_postun_with_restart %{name}.service
+
+%triggerun -- motion <  3.3.0-trunkREV557.8
+# we never shipped /var/motion directory, but it was set as
+# default target_dir in config file. Be nice to admin and migrate
+# ownership at the same time as we switch to running as user
+find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 
 %clean
 rm -rf %{buildroot}
@@ -79,7 +98,7 @@ rm -rf %{buildroot}
 %dir %{_sysconfdir}/%{name}
 %dir %{_datadir}/%{name}-%{version}
 %dir %{_datadir}/%{name}-%{version}/examples
-%doc CHANGELOG COPYING CREDITS INSTALL README motion_guide.html
+%doc CHANGELOG COPYING CREDITS README motion_guide.html
 %attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/motion-dist.conf
 %attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-Debian
 %attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-FreeBSD.sh
@@ -93,8 +112,13 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_bindir}/motion
 %attr(0644,root,root) %{_mandir}/man1/motion.1*
 %attr(0755,root,root) %{_unitdir}/%{name}.service
+%attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sat Apr 20 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.8
+- migrate from running as root to running as motion:video (fixes #1935)
+- don't ship INSTALL file
+
 * Fri Apr 19 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.7
 - re-introduce ffmpeg-compat-devel
 

@@ -3,6 +3,8 @@ Description=motion detection system
 Documentation=man:motion(1) http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
 
 [Service]
+User=motion
+Group=video
 # There's no way to do it automatically, sadly
 # if you have problems with your camera, uncomment one of those
 # for PPC64 and X86_64:

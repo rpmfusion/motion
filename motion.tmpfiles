@@ -1,0 +1,6 @@
+# Type 	Path 	       Mode 	UID  	GID  	Age 	Argument
+#
+# home directory for motion
+d /run/motion		0700	motion	video	-	-
+# create logfile if does not exists
+f /var/log/motion.log	0600	motion	video	-	-
