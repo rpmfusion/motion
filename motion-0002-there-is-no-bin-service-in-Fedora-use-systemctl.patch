@@ -16,7 +16,7 @@ index b97f2f3..75ad7c2 100644
      create 0600 root root
      postrotate
 -        /bin/service motion reload  >/dev/null  2>&1 || true
-+        /usr/bin systemctl reload-or-try-restart motion.service  >/dev/null  2>&1 || true
++        /usr/bin/systemctl reload-or-try-restart motion.service  >/dev/null  2>&1 || true
      endscript
  }
 -- 

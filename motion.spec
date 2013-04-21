@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.2%{?dist}
+Release:        trunkREV557.3%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -99,6 +99,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 
 %changelog
+* Sun Apr 21 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.3
+- fix typo in logrotate patch
+
 * Sat Dec 08 2012 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.2
 - fix logrotate snippet to use systemctl instead of (non-existant) /bin/service
   Fixes #26042604
