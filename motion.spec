@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.8%{?dist}
+Release:        trunkREV557.9%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -12,7 +12,7 @@ Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel ffmpeg-devel
+BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel
 Buildrequires:  pkgconfig(sqlite3)
 BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_unitdir}/%{name}.service
 
 %changelog
+* Wed Jul 10 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.9
+- try without ffmpeg-devel, with ffmpeg-compat-devel only
+
 * Wed Jul 10 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.8
 - correct typo in logrotate patch
 - rebuild hoping that ffmpeg will be picked up
