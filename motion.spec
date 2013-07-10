@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.9%{?dist}
+Release:        trunkREV557.10%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_unitdir}/%{name}.service
 
 %changelog
+* Wed Jul 10 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.10
+- it seems buildsys used wrong sources all the time; reupload correct ones
+
 * Wed Jul 10 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.9
 - try without ffmpeg-devel, with ffmpeg-compat-devel only
 
