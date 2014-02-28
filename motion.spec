@@ -1,6 +1,6 @@
 Name:           motion
 Version:        3.3.0
-Release:        trunkREV557.8%{?dist}
+Release:        trunkREV557.9%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -13,7 +13,7 @@ Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel
+BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel ffmpeg-devel
 Buildrequires:  pkgconfig(sqlite3)
 BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
@@ -66,6 +66,8 @@ sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{
 install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 #We install tmpfiles configuration
 install -D -m 0755 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+#We remove versioned docs
+rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
 
 %pre
 getent passwd motion >/dev/null || \
@@ -115,6 +117,10 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sat Jan 11 2014 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.9
+- use the same sources and BRs as F-19 (trunkREV557.11) branch (fixes #3106)
+- adjust for UnversionedDocdirs
+
 * Sat Apr 20 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.8
 - migrate from running as root to running as motion:video (fixes #1935)
 - don't ship INSTALL file
