@@ -1,12 +1,13 @@
+%global nextver 3.3.0
 Name:           motion
-Version:        3.3.0
-Release:        trunkREV557.8%{?dist}
+Version:        %{nextver}.trunkREV557
+Release:        9%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
-Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{nextver}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
 Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
@@ -32,23 +33,27 @@ with a rather small footprint. This version is built with ffmpeg support but
 without MySQL and PostgreSQL support.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{nextver}
 %patch0 -p1
 %patch1 -p1
 
 %build
 export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
-%configure --sysconfdir=%{_sysconfdir}/%{name} --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
+%configure --sysconfdir=%{_sysconfdir}/%{name} \
+    --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
+
 make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
+#Rename docdir
+mv %{buildroot}/%{_docdir}/%{name}-%{nextver} %{buildroot}/%{_docdir}/%{name}
 #We rename the configuration file
 mv %{buildroot}%{_sysconfdir}/%{name}/motion-dist.conf %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We move the logrotate configuration
 mkdir %{buildroot}%{_sysconfdir}/logrotate.d
-mv %{_builddir}/%{name}-%{version}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion
+mv %{_builddir}/%{name}-%{nextver}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion
 #We run as motion:video user, reflect that in logrotate config
 sed -i 's|create 0600 root root|create 0600 motion video|g' %{buildroot}%{_sysconfdir}/logrotate.d/motion
 #We change the PID file path to match the one in the startup script
@@ -96,17 +101,17 @@ rm -rf %{buildroot}
 #Permissions are bogus upstream, we need to be sure to set them here
 %defattr (-,root,root,-)
 %dir %{_sysconfdir}/%{name}
-%dir %{_datadir}/%{name}-%{version}
-%dir %{_datadir}/%{name}-%{version}/examples
+%dir %{_datadir}/%{name}-%{nextver}
+%dir %{_datadir}/%{name}-%{nextver}/examples
 %doc CHANGELOG COPYING CREDITS README motion_guide.html
-%attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/motion-dist.conf
-%attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-Debian
-%attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-FreeBSD.sh
-%attr(0755,root,root) %{_datadir}/%{name}-%{version}/examples/motion.init-Fedora
-%attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread1.conf
-%attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread2.conf
-%attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread3.conf
-%attr(0644,root,root) %{_datadir}/%{name}-%{version}/examples/thread4.conf
+%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion-dist.conf
+%attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-Debian
+%attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-FreeBSD.sh
+%attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-Fedora
+%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread1.conf
+%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread2.conf
+%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread3.conf
+%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread4.conf
 %attr(0644,root,root) %{_sysconfdir}/logrotate.d/motion
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/motion.conf
 %attr(0755,root,root) %{_bindir}/motion
@@ -115,6 +120,13 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sat Oct 11 2014 Sérgio Basto <sergio@serjux.com> - 3.3.0.trunkREV557-9
+- Rebuild for new gcc https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+- Change naming, NamingGuideline
+  http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages,
+  since it is a forever pre-release. I adopt name version with pre-release tag, %{next_version}.trunkREV557
+  The motivation: rpmdev-bumpspec wasn't working correctly
+
 * Sat Apr 20 2013 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.8
 - migrate from running as root to running as motion:video (fixes #1935)
 - don't ship INSTALL file
