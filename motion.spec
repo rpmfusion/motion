@@ -1,3 +1,29 @@
+
+# TODO:
+#  - both ffmpeg-compat-devel/ffmpeg-devel cannot coexist; one must go away
+#  - /run/motion can be managed with RuntimeDirectory=motion in motion.service,
+#    instead of tmpfiles snippet
+#
+# Motion seems pretty dead upstream.  In the meantime, this is most "alive" fork:
+# https://github.com/sackmotion/motion
+# It can be useful as a source to steal a patch or two.
+
+# Notes from previous packages, Steven Moix:
+# v+
+# the version shipped in Fedora Fedora is the SVN trunk (future 3.3.0 version). 
+# From an SVN checkout in a "motion-svn" directory here is
+# what I usually do to create the new source package for Fedora:
+# Modify from trunk:
+# cp -R motion-svn motion-3.3.0
+# rm -rf motion-3.3.0/.svn
+# vim motion-3.3.0/configure
+# In "configure", modify
+# PACKAGE_VERSION='3.3.0'
+# PACKAGE_STRING='motion trunkREV532' (adapt to the SVN revision number)
+# tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
+#v-
+
+
 %global nextver 3.3.0
 Name:           motion
 Version:        %{nextver}.trunkREV557
