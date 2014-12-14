@@ -1,7 +1,7 @@
 %global nextver 3.3.0
 Name:           motion
 Version:        %{nextver}.trunkREV557
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -14,7 +14,7 @@ Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel
+BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel ffmpeg-devel
 Buildrequires:  pkgconfig(sqlite3)
 BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
@@ -120,6 +120,12 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sun Dec 14 2014 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0.trunkREV557-10
+- restore lost changes (should fix #3460):
+  * Sat Jan 11 2014 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.9
+  - use the same sources and BRs as F-19 (trunkREV557.11) branch (fixes #3106)
+  - adjust for UnversionedDocdirs
+
 * Sat Oct 11 2014 Sérgio Basto <sergio@serjux.com> - 3.3.0.trunkREV557-9
 - Rebuild for new gcc https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 - Change naming, NamingGuideline
