@@ -1,33 +1,28 @@
 
 # TODO:
-#  - both ffmpeg-compat-devel/ffmpeg-devel cannot coexist; one must go away
 #  - /run/motion can be managed with RuntimeDirectory=motion in motion.service,
 #    instead of tmpfiles snippet
 #
 # Motion seems pretty dead upstream.  In the meantime, this is most "alive" fork:
 # https://github.com/sackmotion/motion
 # It can be useful as a source to steal a patch or two.
-
+#
+# Mageia uses Mr-Dave fork: https://github.com/Mr-Dave/motion
+# http://ftp.uni-erlangen.de/mirrors/Mageia/distrib/cauldron/SRPMS/core/release/motion-3.4.0-0.20151003git.1.mga6.src.rpm
+#
 # Notes from previous packages, Steven Moix:
 # v+
-# the version shipped in Fedora Fedora is the SVN trunk (future 3.3.0 version). 
-# From an SVN checkout in a "motion-svn" directory here is
+# the version shipped in Fedora Fedora is the SVN trunk (future 3.3.0 version).
+# From an SVN export in a "motion-3.3.0" directory here is
 # what I usually do to create the new source package for Fedora:
-# Modify from trunk:
-# cp -R motion-svn motion-3.3.0
-# rm -rf motion-3.3.0/.svn
-# vim motion-3.3.0/configure
-# In "configure", modify
-# PACKAGE_VERSION='3.3.0'
-# PACKAGE_STRING='motion trunkREV532' (adapt to the SVN revision number)
+# svn export http://www.lavrsen.dk/svn/motion/trunk/ motion-3.3.0
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
 
-
 %global nextver 3.3.0
 Name:           motion
-Version:        %{nextver}.trunkREV557
-Release:        10%{?dist}
+Version:        %{nextver}.trunkREV561
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -36,12 +31,12 @@ URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
 Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{nextver}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
-Patch0:         motion-0001-emit-asm-emms-only-on-x86-and-amd64-arches.patch
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Patch2:         motion-version.patch
 
-BuildRequires:  libjpeg-devel ffmpeg-compat-devel zlib-devel ffmpeg-devel
+BuildRequires:  libjpeg-devel zlib-devel ffmpeg-devel
 Buildrequires:  pkgconfig(sqlite3)
+BuildRequires:  autoconf automake libtool
 BuildRequires:  systemd-units
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
@@ -60,18 +55,18 @@ without MySQL and PostgreSQL support.
 
 %prep
 %setup -q -n %{name}-%{nextver}
-%patch0 -p1
 %patch1 -p1
+autoreconf
+%patch2 -p1 -b .version
 
 %build
-export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
+#export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
 %configure --sysconfdir=%{_sysconfdir}/%{name} \
     --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
 
 make %{?_smp_mflags}
 
 %install
-rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 #Rename docdir
 mv %{buildroot}/%{_docdir}/%{name}-%{nextver} %{buildroot}/%{_docdir}/%{name}
@@ -129,7 +124,7 @@ rm -rf %{buildroot}
 %dir %{_sysconfdir}/%{name}
 %dir %{_datadir}/%{name}-%{nextver}
 %dir %{_datadir}/%{name}-%{nextver}/examples
-%doc CHANGELOG COPYING CREDITS README motion_guide.html
+%doc CHANGELOG COPYING CREDITS README motion_guide.html INSTALL
 %attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion-dist.conf
 %attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-Debian
 %attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-FreeBSD.sh
@@ -146,6 +141,13 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Nov 18 2015 Sérgio Basto <sergio@serjux.com> - 3.3.0.trunkREV561-1
+- Update motion to runkREV561 .
+- Use only ffmpeg-devel, drop ffmpeg-compat-devel.
+- Use autoreconf to generate ./configure and patch configure with real version.
+- Some spec clean ups.
+- Drop upstreamed patch.
+
 * Sun Dec 14 2014 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0.trunkREV557-10
 - restore lost changes (should fix #3460):
   * Sat Jan 11 2014 Tomasz Torcz <ttorcz@fedoraproject.org> - 3.3.0-trunkREV557.9
