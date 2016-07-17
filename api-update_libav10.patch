@@ -1,0 +1,51 @@
+Description: Update for libav10 API
+Author: Ximin Luo <infinity0@pwned.gg>
+Bug: https://github.com/sackmotion/motion/pull/17
+
+--- a/ffmpeg.c
++++ b/ffmpeg.c
+@@ -434,7 +434,7 @@
+ #endif
+         /* Manually override the codec id. */
+         if (of)
+-            of->video_codec = CODEC_ID_MSMPEG4V2;
++            of->video_codec = AV_CODEC_ID_MSMPEG4V2;
+ 
+     } else if (strcmp(codec, "swf") == 0) {
+         ext = ".swf";
+@@ -450,7 +450,7 @@
+ #else        
+         of = av_guess_format("flv", NULL, NULL);
+ #endif        
+-        of->video_codec = CODEC_ID_FLV1;
++        of->video_codec = AV_CODEC_ID_FLV1;
+     } else if (strcmp(codec, "ffv1") == 0) {
+         ext = ".avi";
+ #ifdef GUESS_NO_DEPRECATED
+@@ -463,7 +463,7 @@
+          * Requires strict_std_compliance to be <= -2
+          */
+         if (of)
+-            of->video_codec = CODEC_ID_FFV1;
++            of->video_codec = AV_CODEC_ID_FFV1;
+ 
+     } else if (strcmp(codec, "mov") == 0) {
+         ext = ".mov";
+@@ -559,7 +559,7 @@
+ 
+     /* Create a new video stream and initialize the codecs. */
+     ffmpeg->video_st = NULL;
+-    if (ffmpeg->oc->oformat->video_codec != CODEC_ID_NONE) {
++    if (ffmpeg->oc->oformat->video_codec != AV_CODEC_ID_NONE) {
+ #if defined FF_API_NEW_AVIO 
+         ffmpeg->video_st = avformat_new_stream(ffmpeg->oc, NULL /* Codec */);
+ #else
+@@ -586,7 +586,7 @@
+ #else
+     c->codec_type = AVMEDIA_TYPE_VIDEO;
+ #endif    
+-    is_mpeg1      = c->codec_id == CODEC_ID_MPEG1VIDEO;
++    is_mpeg1      = c->codec_id == AV_CODEC_ID_MPEG1VIDEO;
+ 
+     if (strcmp(ffmpeg_video_codec, "ffv1") == 0)
+         c->strict_std_compliance = -2;

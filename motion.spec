@@ -22,7 +22,7 @@
 %global nextver 3.3.0
 Name:           motion
 Version:        %{nextver}.trunkREV561
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -33,6 +33,11 @@ Source1:        motion.service
 Source2:        motion.tmpfiles
 Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
 Patch2:         motion-version.patch
+# patches from Debian
+# https://anonscm.debian.org/git/users/infinity0/motion.git/tree/debian/patches
+Patch3:         api-update_copy-old-API-items.patch
+Patch4:         api-update_ffmpeg-2.9.patch
+Patch5:         api-update_libav10.patch
 
 BuildRequires:  libjpeg-devel zlib-devel ffmpeg-devel
 Buildrequires:  pkgconfig(sqlite3)
@@ -56,6 +61,9 @@ without MySQL and PostgreSQL support.
 %prep
 %setup -q -n %{name}-%{nextver}
 %patch1 -p1
+%patch3 -p1 -b .copy-old-API-items
+%patch4 -p1 -b .ffmpeg-2.9
+%patch5 -p1 -b .libav10
 autoreconf
 %patch2 -p1 -b .version
 
@@ -141,6 +149,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sun Jul 17 2016 Leigh Scott <leigh123linux@googlemail.com> - 3.3.0.trunkREV561-2
+- patch for ffmpeg-3
+
 * Wed Nov 18 2015 Sérgio Basto <sergio@serjux.com> - 3.3.0.trunkREV561-1
 - Update motion to runkREV561 .
 - Use only ffmpeg-devel, drop ffmpeg-compat-devel.
