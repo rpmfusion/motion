@@ -22,7 +22,7 @@
 %global nextver 3.3.0
 Name:           motion
 Version:        %{nextver}.trunkREV561
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -149,6 +149,9 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sat Jul 30 2016 Julian Sikorski <belegdol@fedoraproject.org> - 3.3.0.trunkREV561-3
+- Rebuilt for ffmpeg-3.1.1
+
 * Sun Jul 17 2016 Leigh Scott <leigh123linux@googlemail.com> - 3.3.0.trunkREV561-2
 - patch for ffmpeg-3
 
