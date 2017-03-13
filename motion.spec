@@ -19,30 +19,28 @@
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
 
-%global nextver 3.3.0
+%global nextver 4.0.1
 Name:           motion
-Version:        %{nextver}.trunkREV561
-Release:        3%{?dist}
+Version:        %{nextver}
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
-Source0:        http://prdownloads.sourceforge.net/%{name}/%{name}-%{nextver}.tar.gz
+Source0:        https://github.com/Motion-Project/motion/archive/release-%{nextver}.tar.gz#/%{name}-release-%{nextver}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
-Patch1:         motion-0002-there-is-no-bin-service-in-Fedora-use-systemctl.patch
-Patch2:         motion-version.patch
-# patches from Debian
-# https://anonscm.debian.org/git/users/infinity0/motion.git/tree/debian/patches
-Patch3:         api-update_copy-old-API-items.patch
-Patch4:         api-update_ffmpeg-2.9.patch
-Patch5:         api-update_libav10.patch
 
-BuildRequires:  libjpeg-devel zlib-devel ffmpeg-devel
+BuildRequires:  libjpeg-devel
+Buildrequires:  zlib-devel
+Buildrequires:  ffmpeg-devel
 Buildrequires:  pkgconfig(sqlite3)
-BuildRequires:  autoconf automake libtool
+BuildRequires:  autoconf
+Buildrequires:  automake
+Buildrequires:  libtool
 BuildRequires:  systemd-units
+
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
 Requires(pre):    shadow-utils
@@ -59,32 +57,28 @@ with a rather small footprint. This version is built with ffmpeg support but
 without MySQL and PostgreSQL support.
 
 %prep
-%setup -q -n %{name}-%{nextver}
-%patch1 -p1
-%patch3 -p1 -b .copy-old-API-items
-%patch4 -p1 -b .ffmpeg-2.9
-%patch5 -p1 -b .libav10
+%setup -q -n %{name}-release-%{nextver}
 autoreconf
-%patch2 -p1 -b .version
 
 %build
-#export PKG_CONFIG_LIBDIR="%{_libdir}/ffmpeg-compat/pkgconfig"
-%configure --sysconfdir=%{_sysconfdir}/%{name} \
+%configure \
     --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
 
-make %{?_smp_mflags}
+%make_build
 
 %install
-make install DESTDIR=%{buildroot}
-#Rename docdir
-mv %{buildroot}/%{_docdir}/%{name}-%{nextver} %{buildroot}/%{_docdir}/%{name}
-#We rename the configuration file
+%make_install
+
+#We rename the configuration files
 mv %{buildroot}%{_sysconfdir}/%{name}/motion-dist.conf %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-#We move the logrotate configuration
-mkdir %{buildroot}%{_sysconfdir}/logrotate.d
-mv %{_builddir}/%{name}-%{nextver}/motion.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/motion
-#We run as motion:video user, reflect that in logrotate config
-sed -i 's|create 0600 root root|create 0600 motion video|g' %{buildroot}%{_sysconfdir}/logrotate.d/motion
+mv %{buildroot}%{_sysconfdir}/%{name}/camera1-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera1.conf
+mv %{buildroot}%{_sysconfdir}/%{name}/camera2-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera2.conf
+mv %{buildroot}%{_sysconfdir}/%{name}/camera3-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera3.conf
+mv %{buildroot}%{_sysconfdir}/%{name}/camera4-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera4.conf
+#Delete COPYING from doc directory
+rm %{buildroot}%{_datadir}/doc/motion/COPYING
+#Remove init files
+rm %{buildroot}%{_datadir}/%{name}/examples/motion.init-*
 #We change the PID file path to match the one in the startup script
 sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We remove SQL directives in the configuration file, as we don't use them
@@ -123,32 +117,22 @@ exit 0
 # ownership at the same time as we switch to running as user
 find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 
-%clean
-rm -rf %{buildroot}
-
 %files
-#Permissions are bogus upstream, we need to be sure to set them here
-%defattr (-,root,root,-)
+%doc CHANGELOG CREDITS README.md motion_guide.html *.jpg *.png
+%license COPYING
 %dir %{_sysconfdir}/%{name}
-%dir %{_datadir}/%{name}-%{nextver}
-%dir %{_datadir}/%{name}-%{nextver}/examples
-%doc CHANGELOG COPYING CREDITS README motion_guide.html INSTALL
-%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion-dist.conf
-%attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-Debian
-%attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-FreeBSD.sh
-%attr(0755,root,root) %{_datadir}/%{name}-%{nextver}/examples/motion.init-Fedora
-%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread1.conf
-%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread2.conf
-%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread3.conf
-%attr(0644,root,root) %{_datadir}/%{name}-%{nextver}/examples/thread4.conf
-%attr(0644,root,root) %{_sysconfdir}/logrotate.d/motion
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/motion.conf
-%attr(0755,root,root) %{_bindir}/motion
-%attr(0644,root,root) %{_mandir}/man1/motion.1*
-%attr(0755,root,root) %{_unitdir}/%{name}.service
-%attr(0755,root,root) %{_tmpfilesdir}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}/*.conf
+%{_bindir}/motion
+%{_datadir}/%{name}/
+%{_mandir}/man1/motion.1*
+%{_unitdir}/%{name}.service
+%{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Mar 13 2017 Leigh Scott <leigh123linux@googlemail.com> - 4.0.1-1
+- Update to 4.0.1 release
+- Clean up spec file
+
 * Sat Jul 30 2016 Julian Sikorski <belegdol@fedoraproject.org> - 3.3.0.trunkREV561-3
 - Rebuilt for ffmpeg-3.1.1
 
