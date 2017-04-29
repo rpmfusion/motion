@@ -22,7 +22,7 @@
 %global nextver 4.0.1
 Name:           motion
 Version:        %{nextver}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -129,6 +129,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 4.0.1-3
+- Rebuild for ffmpeg update
+
 * Mon Mar 20 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 4.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
