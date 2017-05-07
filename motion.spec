@@ -3,6 +3,8 @@
 #  - /run/motion can be managed with RuntimeDirectory=motion in motion.service,
 #    instead of tmpfiles snippet
 #
+# New Motion home is https://motion-project.github.io/
+#
 # Motion seems pretty dead upstream.  In the meantime, this is most "alive" fork:
 # https://github.com/sackmotion/motion
 # It can be useful as a source to steal a patch or two.
@@ -22,12 +24,12 @@
 %global nextver 4.0.1
 Name:           motion
 Version:        %{nextver}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
 License:        GPLv2+
-URL:            http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome
+URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{nextver}.tar.gz#/%{name}-release-%{nextver}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
@@ -40,6 +42,10 @@ BuildRequires:  autoconf
 Buildrequires:  automake
 Buildrequires:  libtool
 BuildRequires:  systemd-units
+# libmysqlclient-dev (>= 5.5.17-4),
+# libpq-dev,
+# libsdl1.2-dev,
+# libv4l-dev,
 
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
@@ -81,15 +87,9 @@ rm %{buildroot}%{_datadir}/doc/motion/COPYING
 rm %{buildroot}%{_datadir}/%{name}/examples/motion.init-*
 #We change the PID file path to match the one in the startup script
 sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-#We remove SQL directives in the configuration file, as we don't use them
-sed -i 's|sql_log_image|; sql_log_image|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-sed -i 's|sql_log_snapshot|; sql_log_snapshot|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-sed -i 's|sql_log_mpeg|; sql_log_mpeg|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-sed -i 's|sql_log_timelapse|; sql_log_timelapse|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-sed -i 's|sql_query|; sql_query|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We set the log file and target directory - logging is for 3.3 branch
 sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-sed -i 's|target_dir /usr/local/apache2/htdocs/cam1|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|target_dir /tmp/motion|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
 install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 #We install tmpfiles configuration
@@ -129,6 +129,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sun May 07 2017 Sérgio Basto <sergio@serjux.com> - 4.0.1-4
+- Patch from rfbz#4321 applied
+
 * Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 4.0.1-3
 - Rebuild for ffmpeg update
 
