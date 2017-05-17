@@ -24,7 +24,7 @@
 %global nextver 4.0.1
 Name:           motion
 Version:        %{nextver}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -129,6 +129,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed May 17 2017 Leigh Scott <leigh123linux@googlemail.com> - 4.0.1-5
+- Rebuild for ffmpeg update
+
 * Sun May 07 2017 Sérgio Basto <sergio@serjux.com> - 4.0.1-4
 - Patch from rfbz#4321 applied
 
