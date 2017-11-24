@@ -21,10 +21,10 @@
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
 
-%global nextver 4.0.1
+%global nextver 4.1
 Name:           motion
 Version:        %{nextver}
-Release:        6%{?dist}
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 Group:          Applications/Multimedia
@@ -70,7 +70,7 @@ autoreconf
 %configure \
     --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
 
-%make_build
+%make_build V=1
 
 %install
 %make_install
@@ -129,6 +129,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri Nov 24 2017 Leigh Scott <leigh123linux@googlemail.com> - 4.1-1
+- Update to 4.1 release
+
 * Thu Aug 31 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 4.0.1-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
