@@ -21,7 +21,7 @@
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
 
-%global nextver 4.1
+%global nextver 4.1.1
 Name:           motion
 Version:        %{nextver}
 Release:        1%{?dist}
@@ -91,7 +91,7 @@ sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysco
 sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 sed -i 's|target_dir /tmp/motion|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
-install -D -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
+install -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 #We install tmpfiles configuration
 install -D -m 0755 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
@@ -129,6 +129,10 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Jan 10 2018 Leigh Scott <leigh123linux@googlemail.com> - 4.1.1-1
+- Update to 4.1.1 release
+- Fix perms on motion.service (rfbz 4753)
+
 * Fri Nov 24 2017 Leigh Scott <leigh123linux@googlemail.com> - 4.1-1
 - Update to 4.1 release
 
