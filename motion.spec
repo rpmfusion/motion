@@ -33,6 +33,7 @@ URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{nextver}.tar.gz#/%{name}-release-%{nextver}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
+Patch0:         ffmpeg35_buildfix.patch
 
 BuildRequires:  libjpeg-devel
 Buildrequires:  zlib-devel
@@ -63,7 +64,7 @@ with a rather small footprint. This version is built with ffmpeg support but
 without MySQL and PostgreSQL support.
 
 %prep
-%setup -q -n %{name}-release-%{nextver}
+%autosetup -p1 -n %{name}-release-%{nextver}
 autoreconf
 
 %build
