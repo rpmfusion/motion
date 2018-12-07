@@ -1,6 +1,6 @@
 [Unit]
 Description=motion detection system
-Documentation=man:motion(1) http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
+Documentation=man:motion(1) https://motion-project.github.io/
 
 [Service]
 User=motion
