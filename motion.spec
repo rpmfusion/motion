@@ -81,8 +81,8 @@ mv %{buildroot}%{_sysconfdir}/%{name}/camera1-dist.conf %{buildroot}%{_sysconfdi
 mv %{buildroot}%{_sysconfdir}/%{name}/camera2-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera2.conf
 mv %{buildroot}%{_sysconfdir}/%{name}/camera3-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera3.conf
 mv %{buildroot}%{_sysconfdir}/%{name}/camera4-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera4.conf
-#Delete COPYING from doc directory
-rm %{buildroot}%{_datadir}/doc/motion/COPYING
+#Delete doc directory
+rm -rf %{buildroot}%{_datadir}/doc
 #Remove init files
 rm %{buildroot}%{_datadir}/%{name}/examples/motion.init-*
 #We change the PID file path to match the one in the startup script
