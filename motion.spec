@@ -24,10 +24,9 @@
 %global nextver 4.1.1
 Name:           motion
 Version:        %{nextver}
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A motion detection system
 
-Group:          Applications/Multimedia
 License:        GPLv2+
 URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{nextver}.tar.gz#/%{name}-release-%{nextver}.tar.gz
@@ -65,7 +64,7 @@ without MySQL and PostgreSQL support.
 
 %prep
 %autosetup -p1 -n %{name}-release-%{nextver}
-autoreconf
+autoreconf -v
 
 %build
 %configure \
@@ -130,6 +129,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Nov 13 2018 Antonio Trande <sagitter@fedoraproject.org> - 4.1.1-6
+- Rebuild for ffmpeg-3.4.5 on el7
+
 * Fri Jul 27 2018 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 4.1.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
