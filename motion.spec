@@ -23,7 +23,7 @@
 
 Name:           motion
 Version:        4.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A motion detection system
 
 License:        GPLv2+
@@ -41,6 +41,7 @@ BuildRequires:  automake
 BuildRequires:  libtool
 BuildRequires:  systemd-units
 BuildRequires:  libmicrohttpd-devel
+BuildRequires:  libwebp-devel
 # libmysqlclient-dev (>= 5.5.17-4),
 # libpq-dev,
 # libsdl1.2-dev,
@@ -67,7 +68,11 @@ autoreconf -v
 
 %build
 %configure \
-    --without-optimizecpu --with-ffmpeg --without-mysql --without-pgsql
+    --without-optimizecpu \
+    --with-ffmpeg \
+    --without-mysql \
+    --without-pgsql \
+    --with-webp
 
 %make_build V=1
 
@@ -130,8 +135,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Fri Mar 22 2019 Vasiliy N. Glazov <vascom2@gmail.com> - 4.2.2-1
+* Fri Mar 22 2019 Vasiliy N. Glazov <vascom2@gmail.com> - 4.2.2-2
 - Update to 4.2.2
+- Enable Webp Support
 
 * Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 4.1.1-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
