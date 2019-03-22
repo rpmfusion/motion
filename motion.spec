@@ -21,27 +21,26 @@
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
 
-%global nextver 4.1.1
 Name:           motion
-Version:        %{nextver}
-Release:        7%{?dist}
+Version:        4.2.2
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 License:        GPLv2+
 URL:            https://motion-project.github.io/
-Source0:        https://github.com/Motion-Project/motion/archive/release-%{nextver}.tar.gz#/%{name}-release-%{nextver}.tar.gz
+Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
-Patch0:         ffmpeg35_buildfix.patch
 
 BuildRequires:  libjpeg-devel
-Buildrequires:  zlib-devel
-Buildrequires:  ffmpeg-devel
-Buildrequires:  pkgconfig(sqlite3)
+BuildRequires:  zlib-devel
+BuildRequires:  ffmpeg-devel
+BuildRequires:  pkgconfig(sqlite3)
 BuildRequires:  autoconf
-Buildrequires:  automake
-Buildrequires:  libtool
+BuildRequires:  automake
+BuildRequires:  libtool
 BuildRequires:  systemd-units
+BuildRequires:  libmicrohttpd-devel
 # libmysqlclient-dev (>= 5.5.17-4),
 # libpq-dev,
 # libsdl1.2-dev,
@@ -63,7 +62,7 @@ with a rather small footprint. This version is built with ffmpeg support but
 without MySQL and PostgreSQL support.
 
 %prep
-%autosetup -p1 -n %{name}-release-%{nextver}
+%autosetup -p1 -n %{name}-release-%{version}
 autoreconf -v
 
 %build
@@ -131,6 +130,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri Mar 22 2019 Vasiliy N. Glazov <vascom2@gmail.com> - 4.2.2-1
+- Update to 4.2.2
+
 * Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 4.1.1-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
