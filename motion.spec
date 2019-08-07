@@ -23,7 +23,7 @@
 
 Name:           motion
 Version:        4.2.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A motion detection system
 
 License:        GPLv2+
@@ -135,6 +135,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Aug 07 2019 Leigh Scott <leigh123linux@gmail.com> - 4.2.2-3
+- Rebuild for new ffmpeg version
+
 * Fri Mar 22 2019 Vasiliy N. Glazov <vascom2@gmail.com> - 4.2.2-2
 - Update to 4.2.2
 - Enable Webp Support
