@@ -21,9 +21,12 @@
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
 
+%global optflags %{optflags} -flto=auto
+%global build_ldflags %{build_ldflags} -flto
+
 Name:           motion
 Version:        4.2.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A motion detection system
 
 License:        GPLv2+
@@ -67,6 +70,9 @@ without MySQL and PostgreSQL support.
 autoreconf -v
 
 %build
+export AR=%{_bindir}/gcc-ar
+export RANLIB=%{_bindir}/gcc-ranlib
+export NM=%{_bindir}/gcc-nm
 %configure \
     --without-optimizecpu \
     --with-ffmpeg \
@@ -135,6 +141,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Thu Nov 07 2019 Vasiliy N. Glazov <vascom2@gmail.com> - 4.2.2-4
+- Enable LTO
+
 * Wed Aug 07 2019 Leigh Scott <leigh123linux@gmail.com> - 4.2.2-3
 - Rebuild for new ffmpeg version
 
