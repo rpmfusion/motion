@@ -25,13 +25,13 @@
 %global build_ldflags %{build_ldflags} -flto
 
 Name:           motion
-Version:        4.2.2
-Release:        4%{?dist}
+Version:        4.3.0
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 License:        GPLv2+
 URL:            https://motion-project.github.io/
-Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
+Source0:        https://github.com/Motion-Project/motion/archive/Release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
 
@@ -45,6 +45,7 @@ BuildRequires:  libtool
 BuildRequires:  systemd-units
 BuildRequires:  libmicrohttpd-devel
 BuildRequires:  libwebp-devel
+BuildRequires:  gettext-devel
 # libmysqlclient-dev (>= 5.5.17-4),
 # libpq-dev,
 # libsdl1.2-dev,
@@ -66,8 +67,8 @@ with a rather small footprint. This version is built with ffmpeg support but
 without MySQL and PostgreSQL support.
 
 %prep
-%autosetup -p1 -n %{name}-release-%{version}
-autoreconf -v
+%autosetup -p1 -n %{name}-Release-%{version}
+autoreconf -fiv
 
 %build
 export AR=%{_bindir}/gcc-ar
@@ -93,8 +94,6 @@ mv %{buildroot}%{_sysconfdir}/%{name}/camera3-dist.conf %{buildroot}%{_sysconfdi
 mv %{buildroot}%{_sysconfdir}/%{name}/camera4-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera4.conf
 #Delete doc directory
 rm -rf %{buildroot}%{_datadir}/doc
-#Remove init files
-rm %{buildroot}%{_datadir}/%{name}/examples/motion.init-*
 #We change the PID file path to match the one in the startup script
 sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We set the log file and target directory - logging is for 3.3 branch
@@ -106,6 +105,8 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 install -D -m 0755 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 #We remove versioned docs
 rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
+
+%find_lang %{name}
 
 %pre
 getent passwd motion >/dev/null || \
@@ -129,18 +130,20 @@ exit 0
 # ownership at the same time as we switch to running as user
 find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 
-%files
-%doc CHANGELOG CREDITS README.md motion_guide.html *.jpg *.png
-%license COPYING
+%files -f %{name}.lang
+%doc doc/CHANGELOG doc/CREDITS README.md doc/motion_guide.html doc/*.jpg doc/*.png
+%license doc/COPYING
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/*.conf
-%{_bindir}/motion
-%{_datadir}/%{name}/
-%{_mandir}/man1/motion.1*
+%{_bindir}/%{name}
+%{_mandir}/man1/%{name}.1*
 %{_unitdir}/%{name}.service
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Jan 14 2020 Vasiliy N. Glazov <vascom2@gmail.com> - 4.3.0-1
+- Update to 4.3.0
+
 * Thu Nov 07 2019 Vasiliy N. Glazov <vascom2@gmail.com> - 4.2.2-4
 - Enable LTO
 
