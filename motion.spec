@@ -34,6 +34,7 @@ URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/Release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
+Patch0:         motion-fno-common-fix.patch
 
 BuildRequires:  libjpeg-devel
 BuildRequires:  zlib-devel
