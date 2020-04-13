@@ -25,16 +25,15 @@
 %global build_ldflags %{build_ldflags} -flto
 
 Name:           motion
-Version:        4.3.0
-Release:        3%{?dist}
+Version:        4.3.1
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 License:        GPLv2+
 URL:            https://motion-project.github.io/
-Source0:        https://github.com/Motion-Project/motion/archive/Release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
+Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
-Patch0:         motion-fno-common-fix.patch
 
 BuildRequires:  libjpeg-devel
 BuildRequires:  zlib-devel
@@ -68,7 +67,7 @@ with a rather small footprint. This version is built with ffmpeg support but
 without MySQL and PostgreSQL support.
 
 %prep
-%autosetup -p1 -n %{name}-Release-%{version}
+%autosetup -p1 -n %{name}-release-%{version}
 autoreconf -fiv
 
 %build
@@ -142,6 +141,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Apr 13 2020 Vasiliy N. Glazov <vascom2@gmail.com> - 4.3.1-1
+- Update to 4.3.1
+
 * Sat Feb 22 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 4.3.0-3
 - Rebuild for ffmpeg-4.3 git
 
