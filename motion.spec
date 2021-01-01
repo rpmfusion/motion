@@ -20,6 +20,7 @@
 # svn export http://www.lavrsen.dk/svn/motion/trunk/ motion-3.3.0
 # tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
 #v-
+%global _lto_cflags %{nil}
 
 Name:           motion
 Version:        4.3.2
