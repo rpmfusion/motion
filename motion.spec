@@ -23,11 +23,11 @@
 %global _lto_cflags %{nil}
 
 Name:           motion
-Version:        4.5.0
+Version:        4.5.1
 Release:        1%{?dist}
 Summary:        A motion detection system
 
-License:        GPLv2+
+License:        GPL-2.0-or-later
 URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
@@ -139,6 +139,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Dec 20 2022 Vasiliy N. Glazov <vascom2@gmail.com> - 4.5.1-1
+- Update to 4.5.1
+
 * Sun Nov 20 2022 Sérgio Basto <sergio@serjux.com> - 4.5.0-1
 - Update motion to 4.5.0
 
