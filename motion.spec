@@ -24,7 +24,7 @@
 
 Name:           motion
 Version:        4.5.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -32,6 +32,10 @@ URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
+# https://github.com/Motion-Project/motion/commit/40ecd71ff361442f1579089481619dd7cae90ffd
+Patch0:         40ecd71ff361442f1579089481619dd7cae90ffd.patch
+# https://github.com/Motion-Project/motion/issues/1700
+Patch1:         2d8d68cfcc1cf4fc8861671e185fdf235dcf9740.patch
 
 BuildRequires:  libjpeg-devel
 BuildRequires:  zlib-devel
@@ -139,6 +143,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri Aug 04 2023 Vasiliy N. Glazov <vascom2@gmail.com> - 4.5.1-4
+- Fix Build with webp
+
 * Wed Aug 02 2023 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.5.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
 
