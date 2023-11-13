@@ -32,8 +32,6 @@ URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
-# https://github.com/Motion-Project/motion/issues/1700
-Patch1:         2d8d68cfcc1cf4fc8861671e185fdf235dcf9740.patch
 
 BuildRequires:  libjpeg-devel
 BuildRequires:  zlib-devel
