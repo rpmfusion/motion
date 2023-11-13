@@ -23,8 +23,8 @@
 %global _lto_cflags %{nil}
 
 Name:           motion
-Version:        4.5.1
-Release:        4%{?dist}
+Version:        4.6.0
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -143,6 +143,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Nov 13 2023 Vasiliy N. Glazov <vascom2@gmail.com> - 4.6.0-1
+- Update to 4.6.0
+
 * Fri Aug 04 2023 Vasiliy N. Glazov <vascom2@gmail.com> - 4.5.1-4
 - Fix Build with webp
 
