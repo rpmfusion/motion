@@ -23,8 +23,8 @@
 %global _lto_cflags %{nil}
 
 Name:           motion
-Version:        4.6.0
-Release:        3%{?dist}
+Version:        4.7.0
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -92,11 +92,13 @@ mv %{buildroot}%{_sysconfdir}/%{name}/camera3-dist.conf %{buildroot}%{_sysconfdi
 mv %{buildroot}%{_sysconfdir}/%{name}/camera4-dist.conf %{buildroot}%{_sysconfdir}/%{name}/camera4.conf
 #Delete doc directory
 rm -rf %{buildroot}%{_datadir}/doc
+#Fix path
+sed -i 's|/usr/etc|/etc|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We change the PID file path to match the one in the startup script
-sed -i 's|/var/run/motion/motion.pid|/var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|; pid_file value|pid_file /var/run/motion.pid|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We set the log file and target directory - logging is for 3.3 branch
-sed -i 's|;logfile /tmp/motion.log|logfile /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
-sed -i 's|target_dir /tmp/motion|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|; log_file value|log_file /var/log/motion.log|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
+sed -i 's|; target_dir value|target_dir /var/motion|g' %{buildroot}%{_sysconfdir}/%{name}/motion.conf
 #We install our startup script
 install -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 #We install tmpfiles configuration
@@ -139,6 +141,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Sep 17 2024 Leigh Scott <leigh123linux@gmail.com> - 4.7.0-1
+- Update to 4.7.0
+
 * Fri Aug 02 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.6.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 
