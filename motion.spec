@@ -24,7 +24,7 @@
 
 Name:           motion
 Version:        4.7.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -141,6 +141,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Oct 14 2024 Leigh Scott <leigh123linux@gmail.com> - 4.7.0-2
+- Rebuild for ffmpeg-7
+
 * Tue Sep 17 2024 Leigh Scott <leigh123linux@gmail.com> - 4.7.0-1
 - Update to 4.7.0
 
