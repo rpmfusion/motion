@@ -24,7 +24,7 @@
 
 Name:           motion
 Version:        4.7.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -141,6 +141,9 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Jan 28 2025 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.7.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
+
 * Mon Oct 14 2024 Leigh Scott <leigh123linux@gmail.com> - 4.7.0-2
 - Rebuild for ffmpeg-7
 
