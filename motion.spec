@@ -1,30 +1,8 @@
-
-# TODO:
-#  - /run/motion can be managed with RuntimeDirectory=motion in motion.service,
-#    instead of tmpfiles snippet
-#
-# New Motion home is https://motion-project.github.io/
-#
-# Motion seems pretty dead upstream.  In the meantime, this is most "alive" fork:
-# https://github.com/sackmotion/motion
-# It can be useful as a source to steal a patch or two.
-#
-# Mageia uses Mr-Dave fork: https://github.com/Mr-Dave/motion
-# http://ftp.uni-erlangen.de/mirrors/Mageia/distrib/cauldron/SRPMS/core/release/motion-3.4.0-0.20151003git.1.mga6.src.rpm
-#
-# Notes from previous packages, Steven Moix:
-# v+
-# the version shipped in Fedora Fedora is the SVN trunk (future 3.3.0 version).
-# From an SVN export in a "motion-3.3.0" directory here is
-# what I usually do to create the new source package for Fedora:
-# svn export http://www.lavrsen.dk/svn/motion/trunk/ motion-3.3.0
-# tar -pczf motion-3.3.0.tar.gz motion-3.3.0/
-#v-
 %global _lto_cflags %{nil}
 
 Name:           motion
-Version:        4.7.0
-Release:        4%{?dist}
+Version:        4.7.1
+Release:        1%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -32,6 +10,7 @@ URL:            https://motion-project.github.io/
 Source0:        https://github.com/Motion-Project/motion/archive/release-%{version}.tar.gz#/%{name}-release-%{version}.tar.gz
 Source1:        motion.service
 Source2:        motion.tmpfiles
+Source3:        motion.sysusers
 
 BuildRequires:  libjpeg-devel
 BuildRequires:  zlib-devel
@@ -51,7 +30,6 @@ BuildRequires:  gettext-devel
 
 #This requires comes from the startup script, it will be there until motion supports libv4l calls in the code
 Requires: libv4l
-Requires(pre):    shadow-utils
 Requires(post):   systemd
 Requires(preun):  systemd
 Requires(postun): systemd
@@ -103,16 +81,12 @@ sed -i 's|; target_dir value|target_dir /var/motion|g' %{buildroot}%{_sysconfdir
 install -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 #We install tmpfiles configuration
 install -D -m 0755 %{SOURCE2} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+#Setup user and group
+install -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysusersdir}/%{name}.conf
 #We remove versioned docs
 rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
 
 %find_lang %{name}
-
-%pre
-getent passwd motion >/dev/null || \
-    useradd -r -g video -d /run/motion -s /sbin/nologin \
-    -c "motion detection system" motion
-exit 0
 
 %post
 /usr/bin/systemd-tmpfiles --create %{_tmpfilesdir}/%{name}.conf
@@ -124,12 +98,6 @@ exit 0
 %postun
 %systemd_postun_with_restart %{name}.service
 
-%triggerun -- motion <  3.3.0-trunkREV557.8
-# we never shipped /var/motion directory, but it was set as
-# default target_dir in config file. Be nice to admin and migrate
-# ownership at the same time as we switch to running as user
-find /var/motion -user root -group root -exec chown motion:video '{}' ';'
-
 %files -f %{name}.lang
 %doc doc/CHANGELOG doc/CREDITS README.md doc/motion_guide.html doc/*.jpg doc/*.png
 %license LICENSE
@@ -138,9 +106,13 @@ find /var/motion -user root -group root -exec chown motion:video '{}' ';'
 %{_bindir}/%{name}
 %{_mandir}/man1/%{name}.1*
 %{_unitdir}/%{name}.service
+%{_sysusersdir}/%{name}.conf
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Oct 07 2025 Leigh Scott <leigh123linux@gmail.com> - 4.7.1-1
+- Update to 4.7.1
+
 * Sun Jul 27 2025 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.7.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
 

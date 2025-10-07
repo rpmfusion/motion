@@ -1,0 +1,3 @@
+#Type Name    ID     GECOS                       Home directory   Shell
+u     motion  -      "motion detection system"   /run/motion      /usr/bin/nologin
+m     motion  video
