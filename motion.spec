@@ -2,7 +2,7 @@
 
 Name:           motion
 Version:        4.7.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -23,6 +23,8 @@ BuildRequires:  systemd-units
 BuildRequires:  libmicrohttpd-devel
 BuildRequires:  libwebp-devel
 BuildRequires:  gettext-devel
+BuildRequires:  systemd-rpm-macros
+%{?sysusers_requires_compat}
 # libmysqlclient-dev (>= 5.5.17-4),
 # libpq-dev,
 # libsdl1.2-dev,
@@ -88,8 +90,10 @@ rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
 
 %find_lang %{name}
 
+%pre
+%sysusers_create_compat %{SOURCE3}
+
 %post
-/usr/bin/systemd-tmpfiles --create %{_tmpfilesdir}/%{name}.conf
 %systemd_post %{name}.service
 
 %preun
@@ -110,6 +114,9 @@ rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sun Oct 12 2025 Sérgio Basto <sergio@serjux.com> - 4.7.1-2
+- Use sysusers_create_compat
+
 * Tue Oct 07 2025 Leigh Scott <leigh123linux@gmail.com> - 4.7.1-1
 - Update to 4.7.1
 
