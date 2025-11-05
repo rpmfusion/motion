@@ -2,7 +2,7 @@
 
 Name:           motion
 Version:        4.7.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A motion detection system
 
 License:        GPL-2.0-or-later
@@ -114,6 +114,9 @@ rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Nov 05 2025 Leigh Scott <leigh123linux@gmail.com> - 4.7.1-3
+- Rebuild for ffmpeg-8.0
+
 * Sun Oct 12 2025 Sérgio Basto <sergio@serjux.com> - 4.7.1-2
 - Use sysusers_create_compat
 
